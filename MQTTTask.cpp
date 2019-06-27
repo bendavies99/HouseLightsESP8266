@@ -5,8 +5,8 @@ void callback(char *topic, byte *payload, unsigned int length);
 
 MQTTTask::MQTTTask()
 {
-    WiFiClient espClient;
-    m_Client = new PubSubClient(espClient);
+    m_EspClient = new WiFiClient();
+    m_Client = new PubSubClient(*m_EspClient);
 }
 
 void MQTTTask::setup()
@@ -16,7 +16,7 @@ void MQTTTask::setup()
     Serial.println();
     Serial.print("Connecting to ");
     Serial.println(ssid);
-
+    WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
 
     while (WiFi.status() != WL_CONNECTED)

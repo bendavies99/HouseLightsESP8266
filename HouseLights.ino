@@ -1,16 +1,19 @@
 #include "LightsTask.h"
 #include "MQTTTask.h"
+#include "OTATask.h"
 
 #define LED_PIN D2
 #define LED_COUNT 300
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 LightsTask lights_task(&strip);
 MQTTTask mqtt_task;
+OTATask ota_task;
 
 void loop()
 {
-  mqtt_task.loop();
   lights_task.loop();
+  ota_task.loop();
+  mqtt_task.loop();
 }
 void setup()
 {
@@ -18,6 +21,7 @@ void setup()
   Serial.println("Beginning");
   mqtt_task.setup();
   lights_task.setup();
+  ota_task.setup();
 }
 
 // void colorWipe(uint32_t r, uint32_t g, uint32_t b, int wait)

@@ -23,6 +23,7 @@ public:
     void reconnect();
 
 private:
+    WiFiClient *m_EspClient;
     PubSubClient *m_Client;
 };
 
