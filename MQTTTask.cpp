@@ -15,9 +15,9 @@ void MQTTTask::setup()
     // We start by connecting to a WiFi network
     Serial.println();
     Serial.print("Connecting to ");
-    Serial.println(ssid);
+    Serial.println(C_WIFI_SSID);
     WiFi.mode(WIFI_STA);
-    WiFi.begin(ssid, password);
+    WiFi.begin(C_WIFI_SSID, C_WIFI_PASSWORD);
 
     while (WiFi.status() != WL_CONNECTED)
     {
@@ -32,7 +32,7 @@ void MQTTTask::setup()
     Serial.println("IP address: ");
     Serial.println(WiFi.localIP());
 
-    m_Client->setServer(mqtt_server, 1883);
+    m_Client->setServer(C_MQTT_SERVER, 1883);
     m_Client->setCallback(callback);
 }
 
@@ -46,13 +46,13 @@ void MQTTTask::reconnect()
         String clientId = "ESP8266Client-";
         clientId += String(random(0xffff), HEX);
         // Attempt to connect
-        if (m_Client->connect(clientId.c_str(), username, mqtt_password))
+        if (m_Client->connect(clientId.c_str(), C_MQTT_USERNAME, C_MQTT_PASSWORD))
         {
             Serial.println("connected");
             // Once connected, publish an announcement...
-            m_Client->publish("outTopic", "hello world");
+            m_Client->publish(C_MQTT_STATE_TOPIC, "{ state: \"ON\", brightness: 255, effect: \"rainbow\" }");
             // ... and resubscribe
-            m_Client->subscribe("Lights/Bedroom");
+            m_Client->subscribe(C_MQTT_LISTEN_TOPIC);
         }
         else
         {

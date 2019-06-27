@@ -13,7 +13,7 @@
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
 
-#include "globals.h"
+#include "config.h"
 
 class OTATask
 {

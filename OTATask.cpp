@@ -3,6 +3,8 @@
 void OTATask::setup()
 {
     Serial.println("Arduino OTA is being setup");
+    ArduinoOTA.setHostname(C_OTA_HOSTNAME);
+    ArduinoOTA.setPassword(C_OTA_PASSWORD);
     ArduinoOTA.onStart([]() {
         String type;
         if (ArduinoOTA.getCommand() == U_FLASH)

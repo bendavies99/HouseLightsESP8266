@@ -1,13 +1,14 @@
 // WIFI
-const char *ssid = ".....";
-const char *password = ".....";
+#define C_WIFI_SSID "....."
+#define C_WIFI_PASSWORD "..."
 
 // MQTT
-const char *mqtt_server = ".....";
-const char *username = "....";
-const char *mqtt_password = ".....";
-const char *listen_topic = "....";
+#define C_MQTT_SERVER "....."
+#define C_MQTT_USERNAME "...."
+#define C_MQTT_PASSWORD "......"
+#define C_MQTT_LISTEN_TOPIC "........."
+#define C_MQTT_STATE_TOPIC "........"
 
 // OTA
-const char *otaHostname = "ESP8266-....";
-const char *otaPassword = ".....";
+#define C_OTA_HOSTNAME "......."
+#define C_OTA_PASSWORD "......"

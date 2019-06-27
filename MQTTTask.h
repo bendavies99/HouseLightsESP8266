@@ -13,6 +13,7 @@
 #endif
 
 #include "globals.h"
+#include "config.h"
 
 class MQTTTask
 {
