@@ -50,7 +50,7 @@ void MQTTTask::reconnect()
         {
             Serial.println("connected");
             // Once connected, publish an announcement...
-            m_Client->publish(C_MQTT_STATE_TOPIC, "{ state: \"ON\", brightness: 255, effect: \"rainbow\" }");
+            m_Client->publish(C_MQTT_STATE_TOPIC, "{ \"state\": \"ON\", \"brightness\": 255, \"effect\": \"rainbow\" }");
             // ... and resubscribe
             m_Client->subscribe(C_MQTT_LISTEN_TOPIC);
         }
