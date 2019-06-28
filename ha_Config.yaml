@@ -1,0 +1,128 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Home
+  # Location required to calculate the time the sun rises and sets
+  latitude: 0
+  longitude: 0
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 0
+  # metric for Metric, imperial for Imperial
+  unit_system: metric
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: UTC
+  # Customization file
+  customize: !include customize.yaml
+
+
+system_health:
+
+# Enables the frontend
+frontend:
+
+# Enables configuration UI
+config:
+
+# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+# http:
+#   base_url: example.duckdns.org:8123
+
+# Checks for available updates
+# Note: This component will send some information about your system to
+# the developers to assist with development of Home Assistant.
+# For more information, please see:
+# https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
+updater:
+  # Optional, allows Home Assistant developers to focus on popular components.
+  # include_used_components: true
+
+# Discover some devices automatically
+discovery:
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+conversation:
+
+# Enables support for tracking state changes over time
+history:
+
+# View all events in a logbook
+logbook:
+
+# Enables a map showing the location of tracked devices
+map:
+
+# Track the sun
+sun:
+
+media_player:
+  - platform: spotify
+    client_id: ex
+    client_secret: ex
+    aliases:
+        9183abas000: 'Bed Room'
+
+switch:
+  - platform: mqtt
+    name: "Computer"
+    command_topic: House/computer
+    payload_on: "{\"action\": \"wake_computer\"}"
+    payload_off: "{\"action\": \"shutdown_computer\"}"
+    state_on: "ON"
+    state_off: "OFF"
+    
+light:
+  - platform: mqtt
+    effect_list:
+      - rainbow
+      - colorwipe
+      - audiomode
+      - solid
+    effect: true
+    schema: json
+    name: "Bedroom Strip"
+    command_topic: Lights/Bedroom
+    brightness: true
+    rgb: true
+    
+  - platform: group
+    name: Bedroom Lights
+    entities:
+      - light.bedroom_strip
+      - light.13821200807d3a1b0040
+  
+
+mqtt:
+  broker: 127.0.0.1
+  username: ben
+  password: test
+  
+automation:
+  trigger:
+    platform: mqtt
+    topic: computer_lights
+    payload: 'OFF'
+  action:
+      service: homeassistant.turn_off
+      entity_id: switch.06200303dc4f222c9c25
+
+# Sensors
+sensor:
+  # Weather prediction
+  - platform: yr
+
+# Text to speech
+tts:
+  - platform: google_translate
+    service_name: google_say
+
+# Cloud
+cloud:
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+
+panel_iframe:
+  configurator:
+    title: Configurator
+    icon: mdi:wrench
+    url: http://192.168.0.7:3218
