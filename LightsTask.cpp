@@ -40,6 +40,19 @@ void LightsTask::loop()
             m_RainbowAnimation.loop(m_Strip);
             m_RainbowAnimation.incrementIndex(m_Strip->numPixels());
             break;
+        case LightAnimation::AUDIOMODE:
+            if (g_Reset)
+            {
+                    g_Reset = false;
+            }
+            m_AudioModeAnimation.loop(m_Strip);
+            break;
+        case LightAnimation::SOLID:
+            for(int i = 0; i < m_Strip->numPixels(); i++) {
+              m_Strip->setPixelColor(i, g_Red, g_Green, g_Blue);
+            }
+            m_Strip->show();
+            break;
         }
     }
     else

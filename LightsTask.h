@@ -4,6 +4,7 @@
 #include <Adafruit_NeoPixel.h>
 #include "ColourWipeAnimation.h"
 #include "RainbowAnimation.h"
+#include "AudioModeAnimation.h"
 #include "globals.h"
 #if (ARDUINO >= 100)
 #include <Arduino.h>
@@ -24,7 +25,7 @@ private:
     Adafruit_NeoPixel *m_Strip;
     ColourWipeAnimation m_ColorWipeAnimation;
     RainbowAnimation m_RainbowAnimation;
-    Animation *m_Animation;
+    AudioModeAnimation m_AudioModeAnimation;
 };
 
 #endif

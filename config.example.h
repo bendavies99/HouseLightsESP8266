@@ -1,6 +1,8 @@
 // WIFI
 #define C_WIFI_SSID "....."
 #define C_WIFI_PASSWORD "..."
+#define C_WIFI_IP "......."
+#define C_WIFI_GATEWAY "......."
 
 // MQTT
 #define C_MQTT_SERVER "....."

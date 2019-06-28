@@ -4,24 +4,31 @@
 
 #define LED_PIN D2
 #define LED_COUNT 300
+
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
-LightsTask lights_task(&strip);
 MQTTTask mqtt_task;
 OTATask ota_task;
+LightsTask lights_task(&strip);
+
+uint32_t memcurr = 0;
+uint32_t memlast = 0;
+uint32_t counter = 0;
 
 void loop()
 {
-  lights_task.loop();
   ota_task.loop();
   mqtt_task.loop();
+//  memcurr = ESP.getFreeHeap();
+//  Serial.printf("FREEHeap: %d; DIFF %d\n", memcurr, memcurr - memlast);
+//  memlast = memcurr;
+  lights_task.loop();
 }
 void setup()
 {
   Serial.begin(115200);
-  Serial.println("Beginning");
   mqtt_task.setup();
-  lights_task.setup();
   ota_task.setup();
+  lights_task.setup();
 }
 
 // void colorWipe(uint32_t r, uint32_t g, uint32_t b, int wait)

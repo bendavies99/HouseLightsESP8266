@@ -16,6 +16,10 @@ void MQTTTask::setup()
     Serial.println();
     Serial.print("Connecting to ");
     Serial.println(C_WIFI_SSID);
+    IPAddress ip(C_WIFI_IP);
+    IPAddress gateway(C_WIFI_GATEWAY);
+    IPAddress subnet(255, 255, 255, 0);
+    WiFi.config(ip, gateway, subnet);
     WiFi.mode(WIFI_STA);
     WiFi.begin(C_WIFI_SSID, C_WIFI_PASSWORD);
 
@@ -50,7 +54,6 @@ void MQTTTask::reconnect()
         {
             Serial.println("connected");
             // Once connected, publish an announcement...
-            m_Client->publish(C_MQTT_STATE_TOPIC, "{ \"state\": \"ON\", \"brightness\": 255, \"effect\": \"rainbow\" }");
             // ... and resubscribe
             m_Client->subscribe(C_MQTT_LISTEN_TOPIC);
         }
@@ -67,6 +70,9 @@ void MQTTTask::reconnect()
 
 void MQTTTask::loop()
 {
+    if (WiFi.status() != WL_CONNECTED) {
+      Serial.println("WIFI Disconnected");
+    }
     if (!m_Client->connected())
     {
         reconnect();
@@ -86,7 +92,7 @@ void callback(char *topic, byte *payload, unsigned int length)
         json[i] = (char)payload[i];
     }
     Serial.println();
-    DynamicJsonDocument doc(11175);
+    DynamicJsonDocument doc(400);
 
     DeserializationError error = deserializeJson(doc, json);
     if (error)
@@ -97,26 +103,78 @@ void callback(char *topic, byte *payload, unsigned int length)
     String newState = doc["state"];
     if (newState == String("ON"))
     {
+         if(g_CurrentAnimation == LightAnimation::AUDIOMODE) {
+            if(!g_HasStarted) {
+              g_Port->begin(7777);
+              g_HasStarted = true;
+            } else {
+              delete g_Port;
+              g_Port = new WiFiUDP();
+              g_Port->begin(7777);
+            }
+        }
+
         g_IsOnline = true;
     }
     else if (newState == String("OFF"))
     {
+        if(g_CurrentAnimation == LightAnimation::AUDIOMODE) {
+          if(g_HasStarted) {
+            g_Port->stop();
+          }
+        }
         g_IsOnline = false;
+
     }
     if (doc["brightness"])
     {
         int newBrightness = (int)doc["brightness"];
         g_Brightness = newBrightness;
     }
-    String animationType = doc["effect"];
-    if (animationType == String("rainbow"))
-    {
-        g_CurrentAnimation = LightAnimation::RAINBOW;
-    }
-    if (animationType == String("colorwipe"))
-    {
-        g_CurrentAnimation = LightAnimation::COLORWIPE;
+    if(doc.containsKey("effect")) {
+      String animationType = doc["effect"];
+      if (animationType == String("rainbow"))
+      {
+          g_CurrentAnimation = LightAnimation::RAINBOW;
+          if(g_HasStarted) {
+            g_Port->stop();
+          }
+      }
+      if (animationType == String("colorwipe"))
+      {
+          g_CurrentAnimation = LightAnimation::COLORWIPE;
+          if(g_HasStarted) {
+            g_Port->stop();
+          }
+      }
+      if (animationType == String("solid"))
+      {
+          g_CurrentAnimation = LightAnimation::SOLID;
+          if(g_HasStarted) {
+            g_Port->stop();
+          }
+      }
+      if (animationType == String("audiomode"))
+      {
+          g_CurrentAnimation = LightAnimation::AUDIOMODE;
+          if(!g_HasStarted) {
+            g_Port->begin(7777);
+            g_HasStarted = true;
+          } else {
+            delete g_Port;
+            g_Port = new WiFiUDP();
+            g_Port->begin(7777);
+          }
+      }
     }
 
     g_Reset = true;
+
+    if(doc.containsKey("color")) {
+      g_Red = doc["color"]["r"];
+      g_Green = doc["color"]["g"];
+      g_Blue = doc["color"]["b"];
+
+      g_Reset = false;
+    }
 }
